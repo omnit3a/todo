@@ -16,3 +16,6 @@ To use `todo`, enter `todo <name-of-checklist> <command> <argument>`
 
 # Compilation
 Run `make`
+
+# Scripts
+- `remtodo.sh`: List all the tasks left to complete in `<argument>` checklist
