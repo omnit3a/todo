@@ -8,13 +8,14 @@
 #define LINE_AMOUNT 256
 #define LINE_LENGTH 80
 
-#define ARGS_AMOUNT 6
+#define ARGS_AMOUNT 7
 #define ADD_ARG 0
 #define REMOVE_ARG 1
 #define CHECK_ARG 2
 #define UNCHECK_ARG 3
 #define PRINT_ARG 4
 #define TOUCH_ARG 5
+#define IS_CHECKED_ARG 6
 
 typedef struct arg_s {
   int id;
@@ -28,6 +29,7 @@ arg_t arg_defs[ARGS_AMOUNT] = {
   {3, "-u"}, //uncheck checkbox
   {4, "-p"}, //print todo list
   {5, "-t"}, //create todo list
+  {6, "-q"}, //check if a checkbox is checked
 };
 
 char lines[LINE_AMOUNT][LINE_LENGTH];
@@ -210,6 +212,30 @@ void create_checklist(char * path){
   fclose(file);
 }
 
+int is_checked(char * requirement){
+  char * text = malloc(LINE_LENGTH);
+  strcpy(text, "[X] ");
+  strcat(text, requirement);
+  strcat(text, "\n");
+  
+  for (int line = 0 ; line < LINE_AMOUNT ; line++){
+    if (lines[line] == NULL){
+      fprintf(stderr, "todo: error: could not find specified text\n");
+      free(text);
+      return 1;
+    }
+    if (strcmp(text, lines[line]) == 0){
+      printf("todo: %s is checked\n", requirement);
+      free(text);
+      return 0;
+    }
+  }
+
+  printf("todo: %s is unchecked\n", requirement);
+  free(text);
+  return 1;
+}
+
 int main(int argc, char ** argv){
   if (argc == 1){
     fprintf(stderr, "todo: error: no arguments\n");
@@ -256,6 +282,8 @@ int main(int argc, char ** argv){
     case TOUCH_ARG:
       create_checklist(argv[1]);
       break;
+    case IS_CHECKED_ARG:
+      return is_checked(argv[3]);
   };
 
   return 0;
