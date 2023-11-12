@@ -11,3 +11,6 @@ To use `todo`, enter `todo <name-of-checklist> <command> <argument>`
 - `-c`: Check `<argument>` off list
 - `-u`: Uncheck `<argument>` from list
 - `-p`: Print checklist to `stdout`
+
+# Compilation
+Run `make`
