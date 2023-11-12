@@ -1,29 +1,33 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
 
 #define ARG_STRING_LENGTH 2
 
 #define LINE_AMOUNT 256
 #define LINE_LENGTH 80
 
+#define ARGS_AMOUNT 6
 #define ADD_ARG 0
 #define REMOVE_ARG 1
 #define CHECK_ARG 2
 #define UNCHECK_ARG 3
 #define PRINT_ARG 4
+#define TOUCH_ARG 5
 
 typedef struct arg_s {
   int id;
   char string[ARG_STRING_LENGTH];
 } arg_t;
 
-arg_t arg_defs[5] = {
+arg_t arg_defs[ARGS_AMOUNT] = {
   {0, "-a"}, //add checkbox
   {1, "-r"}, //remove checkbox
   {2, "-c"}, //check checkbox
   {3, "-u"}, //uncheck checkbox
   {4, "-p"}, //print todo list
+  {5, "-t"}, //create todo list
 };
 
 char lines[LINE_AMOUNT][LINE_LENGTH];
@@ -192,6 +196,20 @@ void print_checklist(){
   }
 }
 
+void create_checklist(char * path){
+  FILE * file;
+
+  if (access(path, F_OK) == 0){
+    fprintf(stderr, "todo: error: %s already exists\n", path);
+    exit(-1);
+  }
+  
+  file = fopen(path, "w");
+  printf("todo: created %s\n", path);
+  
+  fclose(file);
+}
+
 int main(int argc, char ** argv){
   if (argc == 1){
     fprintf(stderr, "todo: error: no arguments\n");
@@ -204,18 +222,20 @@ int main(int argc, char ** argv){
   }
 
   int arg_id;
-  for (arg_id = 0 ; arg_id < 4 ; arg_id++){
+  for (arg_id = 0 ; arg_id < ARGS_AMOUNT ; arg_id++){
     if (strcmp(arg_defs[arg_id].string, argv[2]) == 0){
       break;
     }
   }
   
-  if (arg_id == 5){
+  if (arg_id == ARGS_AMOUNT){
     fprintf(stderr, "todo: error: unknown argument\n");
     return -1;
   }
 
-  get_file_lines(argv[1]);
+  if (arg_id != TOUCH_ARG){
+    get_file_lines(argv[1]);
+  }
 
   switch(arg_id){
     case ADD_ARG:
@@ -232,6 +252,9 @@ int main(int argc, char ** argv){
       break;
     case PRINT_ARG:
       print_checklist();
+      break;
+    case TOUCH_ARG:
+      create_checklist(argv[1]);
       break;
   };
 
