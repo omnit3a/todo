@@ -12,6 +12,7 @@ To use `todo`, enter `todo <name-of-checklist> <command> <argument>`
 - `-u`: Uncheck `<argument>` from list
 - `-p`: Print checklist to `stdout`
 - `-t`: Create checklist if it doesn't already exist
+- `-q`: Check whether or not `<argument>` is checked
 
 # Compilation
 Run `make`
